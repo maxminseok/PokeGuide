@@ -37,9 +37,4 @@ class MainViewModel {
             }).disposed(by: disposeBag)
     }
     
-    
-    
-    
-    
-    
 }
