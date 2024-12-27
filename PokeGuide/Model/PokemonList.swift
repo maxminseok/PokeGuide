@@ -14,4 +14,9 @@ struct PokemonList: Codable {
 struct PokemonData: Codable {
     let name: String
     let url: String
+    
+    // url에서 id 추출
+    var id: Int {
+        Int(url.split(separator: "/").last ?? "0") ?? 0
+    }
 }
