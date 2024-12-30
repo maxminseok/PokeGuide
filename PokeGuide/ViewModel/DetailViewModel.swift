@@ -10,8 +10,6 @@ import RxSwift
 
 class DetailViewModel {
     
-    private let disposeBag = DisposeBag()
-    
     func fetchPoekemonDetailData(_ pokemonData: PokemonData) -> Single<PokemonDetail> {
         guard let url = URL(string: "\(pokemonData.url)") else {
             return Single.error(NetworkError.invalidUrl)
