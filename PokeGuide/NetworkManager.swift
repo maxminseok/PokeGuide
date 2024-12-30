@@ -12,6 +12,7 @@ enum NetworkError: Error {
     case invalidUrl
     case dataFetchfail
     case decodingFail
+    case invalidData
 }
 
 class NetworkManager {
