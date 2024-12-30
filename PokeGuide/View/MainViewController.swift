@@ -26,11 +26,14 @@ class MainViewController: UIViewController {
     private let pokemonballImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "pokemonBall")
+        imageView.backgroundColor = UIColor.mainRed
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
     private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView()
+        let layout = UICollectionViewFlowLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(PokemonCell.self, forCellWithReuseIdentifier: PokemonCell.id)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -46,6 +49,7 @@ class MainViewController: UIViewController {
     
     private func bind() {
         mainViewModel.pokemonSubject
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] pokemon in
                 self?.pokemonData = pokemon
                 self?.collectionView.reloadData()
@@ -64,6 +68,7 @@ class MainViewController: UIViewController {
         pokemonballImageView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
             $0.centerX.equalTo(view.safeAreaLayoutGuide.snp.centerX)
+            $0.width.height.equalTo(UIScreen.main.bounds.width * 0.3)
         }
         
         collectionView.snp.makeConstraints {
@@ -100,6 +105,17 @@ extension MainViewController: UICollectionViewDataSource {
         cell.configure(pokemonData[indexPath.row])
         return cell
     }
+}
+
+extension MainViewController: UICollectionViewDelegateFlowLayout {
     
-    
+    // 셀 크기 설정
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let itemsPerRow: CGFloat = 3 // 가로로 배치할 셀 개수
+        let spacing: CGFloat = collectionView.frame.width * 0.03 // 셀 간 간격 (컬렉션 뷰 너비의 3%)
+        let totalSpacing = (itemsPerRow - 1) * spacing // 전체 간격 계산
+        let width = (collectionView.frame.width - totalSpacing) / itemsPerRow // 셀 너비 계산
+        return CGSize(width: width, height: width)
+    }
+
 }

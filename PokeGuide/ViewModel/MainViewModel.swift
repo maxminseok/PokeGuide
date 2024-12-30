@@ -5,7 +5,7 @@
 //  Created by t2023-m0072 on 12/27/24.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 
 class MainViewModel {
@@ -39,6 +39,23 @@ class MainViewModel {
     
     // 포켓몬 이미지 불러오기
     let baseUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/"
+//    func fetchPokemonImage(_ pokemonData: PokemonData) -> Single<UIImage> {
+//        return Single.create { single in
+//            guard let imageUrl = URL(string: self.baseUrl + "\(pokemonData.id).png") else {
+//                single(.failure(NetworkError.invalidUrl))
+//                return Disposables.create()
+//            }
+//            DispatchQueue.global().async{
+//                if let data = try? Data(contentsOf: imageUrl), let image = UIImage(data: data) {
+//                    single(.success(image))
+//                } else {
+//                    single(.failure(NetworkError.invalidData))
+//                }
+//            }
+//            return Disposables.create()
+//        }
+//    }
+    
     func fetchPokemonImage(_ pokemonData: PokemonData) -> Single<URL> {
         guard let imageUrl = URL(string: baseUrl + "\(pokemonData.id).png") else {
             return Single.error(NetworkError.invalidUrl)
