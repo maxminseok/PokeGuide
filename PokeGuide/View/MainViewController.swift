@@ -83,11 +83,10 @@ extension MainViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // detailViewController로 이동
-//        let selectedCell = pokemonData[indexPath.row]
-//        let detailVC = detailViewController()
-//        detailVC.setDetailViewData(selectedCell)
-//        self.navigationController?.pushViewController(detailVC, animated: true)
-        
+        let selectedCell = pokemonData[indexPath.row]
+        let detailVC = DetailViewController()
+        detailVC.setDetailViewData(selectedCell)
+        self.navigationController?.pushViewController(detailVC, animated: true)
     }
 }
 
