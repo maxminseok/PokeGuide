@@ -38,30 +38,11 @@ class MainViewModel {
     }
     
     // 포켓몬 이미지 불러오기
-    private let baseUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/"
     func fetchPokemonImage(_ pokemonData: PokemonData) -> Single<UIImage> {
-        guard let imageUrl = URL(string: baseUrl + "\(pokemonData.id).png") else {
+        guard let imageUrl = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonData.id).png") else {
             return Single.error(NetworkError.invalidUrl)
         }
-        return Single.create { single in
-            let task = URLSession.shared.dataTask(with: imageUrl) { data, response, error in
-                if let error = error {
-                    single(.failure(error))
-                    return
-                }
-                
-                guard let data = data, let image = UIImage(data: data) else {
-                    single(.failure(NetworkError.invalidData))
-                    return
-                }
-                
-                single(.success(image))
-            }
-            task.resume()
-            return Disposables.create {
-                task.cancel()
-            }
-        }
+        return NetworkManager.shared.fetchImage(imageUrl)
     }
     
 }

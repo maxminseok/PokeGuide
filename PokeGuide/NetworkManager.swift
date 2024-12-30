@@ -5,7 +5,7 @@
 //  Created by t2023-m0072 on 12/27/24.
 //
 
-import Foundation
+import UIKit
 import RxSwift
 
 enum NetworkError: Error {
@@ -46,6 +46,28 @@ class NetworkManager {
                 }
             }.resume()
             return Disposables.create()
+        }
+    }
+    
+    func fetchImage(_ url: URL) -> Single<UIImage> {
+        return Single.create { single in
+            let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                if let error = error {
+                    single(.failure(error))
+                    return
+                }
+                
+                guard let data = data, let image = UIImage(data: data) else {
+                    single(.failure(NetworkError.invalidData))
+                    return
+                }
+                
+                single(.success(image))
+            }
+            task.resume()
+            return Disposables.create {
+                task.cancel()
+            }
         }
     }
 }
