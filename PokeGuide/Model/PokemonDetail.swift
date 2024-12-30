@@ -8,6 +8,7 @@
 import Foundation
 
 struct PokemonDetail: Codable {
+    let id: Int
     let name: String
     let weight: Int
     let height: Int
@@ -15,5 +16,9 @@ struct PokemonDetail: Codable {
 }
 
 struct Types: Codable {
-    let type: String
+    let type: Name
+}
+
+struct Name: Codable {
+    let name: PokemonTypeName
 }
