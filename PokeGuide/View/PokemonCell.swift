@@ -13,7 +13,6 @@ class PokemonCell: UICollectionViewCell {
     
     static let id = "PokemonCell"
     let disposeBag = DisposeBag()
-    private let mainViewModel = MainViewModel()
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -38,8 +37,8 @@ class PokemonCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(_ pokemonData: PokemonData) {
-        mainViewModel.fetchPokemonImage(pokemonData)
+    func configure(_ pokemonData: PokemonData, _ viewModel: MainViewModel) {
+        viewModel.fetchPokemonImage(pokemonData)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] image in
                 self?.imageView.image = image
