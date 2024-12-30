@@ -81,6 +81,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UICollectionViewDelegate {
     
+    // 셀 선택 처리
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // detailViewController로 이동
         let selectedCell = pokemonData[indexPath.row]
