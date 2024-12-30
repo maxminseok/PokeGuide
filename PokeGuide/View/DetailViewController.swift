@@ -173,11 +173,11 @@ class DetailViewController: UIViewController {
         detailViewModel.fetchPoekemonDetailData(data)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] pokemonDetail in
-                self?.nameLabel.text = pokemonDetail.name
+                self?.nameLabel.text = PokemonTranslator.getKoreanName(for: pokemonDetail.name)
                 self?.numberLabel.text = "No.\(pokemonDetail.id)"
-                self?.heightLabel.text = "키: \(pokemonDetail.height)"
-                self?.weightLabel.text = "몸무게: \(pokemonDetail.weight)"
-                self?.typeLabel.text = "타입: " + pokemonDetail.types.map { $0.type.name }.joined(separator: ", ")
+                self?.heightLabel.text = String(format: "키: %.1f m", Double(pokemonDetail.height) / 10.0)
+                self?.weightLabel.text = String(format: "몸무게: %.1f kg", Double(pokemonDetail.weight) / 10.0)
+                self?.typeLabel.text = "타입: " + pokemonDetail.types.map { $0.type.name.displayName }.joined(separator: ", ")
             }, onError: { error in
                 print("데이터 에러: \(error)")
             }).disposed(by: disposeBag)

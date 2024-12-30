@@ -20,5 +20,5 @@ struct Types: Codable {
 }
 
 struct Name: Codable {
-    let name: String
+    let name: PokemonTypeName
 }
