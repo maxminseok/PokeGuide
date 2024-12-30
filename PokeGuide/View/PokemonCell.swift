@@ -37,20 +37,13 @@ class PokemonCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(_ pokemonData: PokemonData) {
-        let mainViewModel = MainViewModel()
-        mainViewModel.fetchPokemonImage(pokemonData)
-            .observe(on: SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: { [weak self] url in
-                if let data = try? Data(contentsOf: url) {
-                    if let image = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            self?.imageView.image = image
-                        }
-                    }
-                }
+    func configure(_ pokemonData: PokemonData, _ viewModel: MainViewModel) {
+        viewModel.fetchPokemonImage(pokemonData)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] image in
+                self?.imageView.image = image
             }, onError: { error in
-                print("이미지 에러 : \(error)")
+            print("이미지 에러: \(error)")
             }).disposed(by: disposeBag)
     }
     

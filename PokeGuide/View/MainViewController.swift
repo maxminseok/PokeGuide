@@ -81,6 +81,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UICollectionViewDelegate {
     
+    // 셀 선택 처리
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // detailViewController로 이동
         let selectedCell = pokemonData[indexPath.row]
@@ -101,7 +102,7 @@ extension MainViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        cell.configure(pokemonData[indexPath.row])
+        cell.configure(pokemonData[indexPath.row], mainViewModel)
         return cell
     }
 }
