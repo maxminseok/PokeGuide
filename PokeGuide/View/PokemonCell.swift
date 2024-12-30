@@ -58,9 +58,8 @@ class PokemonCell: UICollectionViewCell {
         [
             imageView
         ].forEach { contentView.addSubview($0) }
-        
         imageView.snp.makeConstraints {
-            $0.width.height.equalTo(contentView.snp.width)
+            $0.edges.equalTo(contentView)
         }
     }
     

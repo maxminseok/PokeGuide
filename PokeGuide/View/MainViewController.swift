@@ -66,13 +66,13 @@ class MainViewController: UIViewController {
         ].forEach { view.addSubview($0) }
         
         pokemonballImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.centerX.equalTo(view.safeAreaLayoutGuide.snp.centerX)
             $0.width.height.equalTo(UIScreen.main.bounds.width * 0.3)
         }
         
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(pokemonballImageView.snp.bottom).offset(10)
+            $0.top.equalTo(pokemonballImageView.snp.bottom).offset(20)
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide.snp.horizontalEdges)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
@@ -112,10 +112,26 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
     // 셀 크기 설정
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let itemsPerRow: CGFloat = 3 // 가로로 배치할 셀 개수
-        let spacing: CGFloat = collectionView.frame.width * 0.03 // 셀 간 간격 (컬렉션 뷰 너비의 3%)
+        let spacing: CGFloat = 10
         let totalSpacing = (itemsPerRow - 1) * spacing // 전체 간격 계산
-        let width = (collectionView.frame.width - totalSpacing) / itemsPerRow // 셀 너비 계산
-        return CGSize(width: width, height: width)
+        let width = (collectionView.frame.width - totalSpacing - 20) / itemsPerRow // 셀 너비 계산
+        return CGSize(width: floor(width), height: floor(width))
     }
 
+    // 행 간 간격 설정
+    func collectionView(
+        _ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
+    }
+    
+    // 여백 설정
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        let spacing: CGFloat = 10
+        return UIEdgeInsets(top: spacing, left: spacing, bottom: spacing, right: spacing)
+    }
+    
+    // 열 간 간격 설정
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
+    }
 }
