@@ -20,6 +20,7 @@ class MainViewController: UIViewController {
     
     private let mainViewModel = MainViewModel()
     private let disposeBag = DisposeBag()
+    private var isFetchingData = false
     
     private var pokemonData = [PokemonData]()
     
@@ -88,6 +89,35 @@ extension MainViewController: UICollectionViewDelegate {
         let detailVC = DetailViewController()
         detailVC.setDetailViewData(selectedCell)
         self.navigationController?.pushViewController(detailVC, animated: true)
+    }
+    
+    // 스크롤 감지 메서드
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y // 현재 스크롤된 Y 좌표
+        let contentHeight = scrollView.contentSize.height // 스크롤 되어야 하는 컨텐츠의 총 높이
+        let height = scrollView.frame.size.height // 화면에 보이는 스크롤뷰의 높이
+        
+        // 하단에 도달했을 때 새로운 데이터 로드하기
+        if offsetY > contentHeight - height - 100 {
+            fetchMoreData()
+        }
+    }
+    
+    // 무한 스크롤 구현 메서드
+    private func fetchMoreData() {
+        guard !isFetchingData else { return } // 메서드 중복 호출 방지
+        isFetchingData = true
+        
+        mainViewModel.pokemonSubject
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] newPokemon in
+                self?.pokemonData.append(contentsOf: newPokemon)
+                self?.collectionView.reloadData()
+                self?.isFetchingData = false
+            }, onError: { [weak self] error in
+                print("새 데이터 에러: \(error)")
+                self?.isFetchingData = false
+            }).disposed(by: disposeBag)
     }
 }
 
