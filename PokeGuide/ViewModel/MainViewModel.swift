@@ -26,6 +26,7 @@ class MainViewModel {
     
     // 포켓몬 데이터 불러오기
     func fetchPoekemonData() {
+        print("fetchPoekemonData 호출됨")
         guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=\(limit)&offset=\(offset)") else {
             pokemonSubject.onError(NetworkError.invalidUrl)
             return
@@ -49,6 +50,7 @@ class MainViewModel {
     
     // 포켓몬 데이터 새로 불러오기
     func fetchMorePokemonData() {
+        print("fetchMorePokemonData 호출됨")
         guard !isFetching, hasMoreData else { return } // 추가 데이터가 없거나 중복 호출 방지
         
         isFetching = true // 메서드 동작시 플래그 true

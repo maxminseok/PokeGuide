@@ -98,7 +98,7 @@ extension MainViewController: UICollectionViewDelegate {
         let height = scrollView.frame.size.height // 화면에 보이는 스크롤뷰의 높이
         
         // 하단에 도달했을 때 새로운 데이터 로드하기
-        if offsetY > contentHeight - height - 100 {
+        if offsetY > contentHeight - height - 100 && contentHeight > height {
             fetchMoreData()
         }
     }
@@ -108,16 +108,8 @@ extension MainViewController: UICollectionViewDelegate {
         guard !isFetchingData else { return } // 메서드 중복 호출 방지
         isFetchingData = true
         
-        mainViewModel.pokemonSubject
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] newPokemon in
-                self?.pokemonData.append(contentsOf: newPokemon)
-                self?.collectionView.reloadData()
-                self?.isFetchingData = false
-            }, onError: { [weak self] error in
-                print("새 데이터 에러: \(error)")
-                self?.isFetchingData = false
-            }).disposed(by: disposeBag)
+        mainViewModel.fetchMorePokemonData()
+        isFetchingData = false
     }
 }
 
