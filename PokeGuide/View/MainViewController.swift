@@ -62,6 +62,7 @@ class MainViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] in
                 self?.showNoMoreAlert()
+                self?.collectionView.bounces = false
             }).disposed(by: disposeBag)
     }
     
@@ -111,17 +112,8 @@ extension MainViewController: UICollectionViewDelegate {
         
         // 하단에 도달했을 때 새로운 데이터 로드하기
         if offsetY > contentHeight - height - 200 && contentHeight > height {
-            fetchMoreData()
+            mainViewModel.fetchPoekemonData(reset: false)
         }
-    }
-    
-    // 무한 스크롤 구현 메서드
-    private func fetchMoreData() {
-        guard !isFetchingData else { return } // 메서드 중복 호출 방지
-        isFetchingData = true
-        
-        mainViewModel.fetchPoekemonData(reset: false)
-        isFetchingData = false
     }
 }
 

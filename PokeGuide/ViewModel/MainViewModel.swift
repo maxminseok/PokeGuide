@@ -25,6 +25,7 @@ class MainViewModel {
         fetchPoekemonData(reset: true) // 초기 데이터 로드하도록 설정
     }
     
+    // 포켓몬 데이터를 받아오는 메서드
     func fetchPoekemonData(reset: Bool) {
         // 초기 데이터 로드(true)인지 추가 데이터 로드(false)인지 확인
         if reset {
@@ -32,7 +33,6 @@ class MainViewModel {
             hasMoreData = true
         }
         guard !isFetching, hasMoreData else { return }
-        
         isFetching = true
         
         guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=\(limit)&offset=\(offset)") else {
@@ -73,7 +73,7 @@ class MainViewModel {
             }).disposed(by: disposeBag)
     }
     
-    // 포켓몬 이미지 불러오기
+    // 포켓몬 이미지를 받아오는 메서드
     func fetchPokemonImage(_ pokemonData: PokemonData) -> Single<UIImage> {
         guard let imageUrl = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonData.id).png") else {
             return Single.error(NetworkError.invalidUrl)

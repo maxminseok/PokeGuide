@@ -12,7 +12,7 @@ import RxCocoa
 class PokemonCell: UICollectionViewCell {
     
     static let id = "PokemonCell"
-    let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -25,6 +25,7 @@ class PokemonCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        disposeBag = DisposeBag()
         imageView.image = nil
     }
     
