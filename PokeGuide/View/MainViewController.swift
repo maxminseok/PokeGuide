@@ -41,7 +41,7 @@ class MainViewController: UIViewController {
         collectionView.backgroundColor = UIColor.darkRed
         return collectionView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         bind()
@@ -56,6 +56,12 @@ class MainViewController: UIViewController {
                 self?.collectionView.reloadData()
             }, onError: { error in
                 print("에러 발생 : \(error)")
+            }).disposed(by: disposeBag)
+        
+        mainViewModel.noMoreDataSubject
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                self?.showNoMoreAlert()
             }).disposed(by: disposeBag)
     }
     
@@ -78,6 +84,12 @@ class MainViewController: UIViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
+    
+    private func showNoMoreAlert() {
+        let alert = UIAlertController(title: "알림", message: "더이상 포켓몬 데이터가 없습니다", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
 }
 
 extension MainViewController: UICollectionViewDelegate {
@@ -98,7 +110,7 @@ extension MainViewController: UICollectionViewDelegate {
         let height = scrollView.frame.size.height // 화면에 보이는 스크롤뷰의 높이
         
         // 하단에 도달했을 때 새로운 데이터 로드하기
-        if offsetY > contentHeight - height - 100 && contentHeight > height {
+        if offsetY > contentHeight - height - 200 && contentHeight > height {
             fetchMoreData()
         }
     }
@@ -139,12 +151,12 @@ extension MainViewController: UICollectionViewDelegateFlowLayout {
         let width = (collectionView.frame.width - totalSpacing - 20) / itemsPerRow // 셀 너비 계산
         return CGSize(width: floor(width), height: floor(width))
     }
-
+    
     // 행 간 간격 설정
     func collectionView(
         _ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
-    }
+            return 10
+        }
     
     // 여백 설정
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {

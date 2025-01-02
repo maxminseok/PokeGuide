@@ -19,6 +19,7 @@ class MainViewModel {
     
     // view가 구독할 subject
     let pokemonSubject = BehaviorSubject(value: [PokemonData]())
+    let noMoreDataSubject = PublishSubject<Void>()
     
     init() {
         fetchPoekemonData(reset: true) // 초기 데이터 로드하도록 설정
@@ -47,9 +48,12 @@ class MainViewModel {
                 // 로드 된 데이터 있는지 확인
                 if pokemonList.results.isEmpty {
                     self.hasMoreData = false // 없을 경우 플래그 false
-                } else {
-                    // 로드 된 데이터 있을 경우
-                    if reset { // 초기 데이터 로드 일 경우
+                    self.noMoreDataSubject.onNext(())
+                }
+                // 로드 된 데이터 있을 경우
+                else {
+                    // 초기 데이터 로드 일 경우
+                    if reset {
                         self.pokemonSubject.onNext(pokemonList.results)
                     }
                     // 스크롤 하여 추가 로드하는 경우
@@ -58,9 +62,9 @@ class MainViewModel {
                         currentData.append(contentsOf: pokemonList.results)
                         self.pokemonSubject.onNext(currentData)
                     }
-                    // 오프셋 증가
-                    self.offset += self.limit
                 }
+                // 오프셋 증가
+                self.offset += self.limit
                 // 데이터 로드 후 중복 호출 방지 플래그 false
                 self.isFetching = false
             }, onFailure: { error in
