@@ -12,8 +12,10 @@ import RxCocoa
 class PokemonCell: UICollectionViewCell {
     
     static let id = "PokemonCell"
-    let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
+    private var currentPokemonId: Int?
     
+    // 포켓몬 이미지
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -23,9 +25,11 @@ class PokemonCell: UICollectionViewCell {
         return imageView
     }()
     
+    // 재사용 처리
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+        currentPokemonId = nil
     }
     
     override init(frame: CGRect) {
@@ -38,9 +42,14 @@ class PokemonCell: UICollectionViewCell {
     }
     
     func configure(_ pokemonData: PokemonData, _ viewModel: MainViewModel) {
+        let pokemonId = pokemonData.id
+        currentPokemonId = pokemonId // 현재 포켓몬 id 저장
+        
+        // 이미지 로딩
         viewModel.fetchPokemonImage(pokemonData)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] image in
+                guard self?.currentPokemonId == pokemonId else { return } // 셀이 재사용 되지 않았는지 확인
                 self?.imageView.image = image
             }, onError: { error in
             print("이미지 에러: \(error)")
@@ -55,5 +64,4 @@ class PokemonCell: UICollectionViewCell {
             $0.edges.equalTo(contentView)
         }
     }
-    
 }

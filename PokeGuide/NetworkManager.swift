@@ -49,6 +49,7 @@ class NetworkManager {
         }
     }
     
+    // 포켓몬 이미지 로드 메서드
     func fetchImage(_ url: URL) -> Single<UIImage> {
         return Single.create { single in
             let task = URLSession.shared.dataTask(with: url) { data, response, error in
