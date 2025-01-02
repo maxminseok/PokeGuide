@@ -108,7 +108,7 @@ extension MainViewController: UICollectionViewDelegate {
         guard !isFetchingData else { return } // 메서드 중복 호출 방지
         isFetchingData = true
         
-        mainViewModel.fetchMorePokemonData()
+        mainViewModel.fetchPoekemonData(reset: false)
         isFetchingData = false
     }
 }

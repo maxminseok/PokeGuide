@@ -15,28 +15,57 @@ class MainViewModel {
     private let limit = 20
     private var offset = 0
     private var isFetching = false // 중복 호출 방지 플래그
-    private var hasMoreData = true // 추가 데이터 여부 플래그
+    private var hasMoreData = true // 추가 데이터 유무 확인 플래그
     
     // view가 구독할 subject
     let pokemonSubject = BehaviorSubject(value: [PokemonData]())
     
     init() {
-        fetchPoekemonData()
+        fetchPoekemonData(reset: true) // 초기 데이터 로드하도록 설정
     }
     
-    // 포켓몬 데이터 불러오기
-    func fetchPoekemonData() {
-        print("fetchPoekemonData 호출됨")
+    func fetchPoekemonData(reset: Bool) {
+        // 초기 데이터 로드(true)인지 추가 데이터 로드(false)인지 확인
+        if reset {
+            offset = 0
+            hasMoreData = true
+        }
+        guard !isFetching, hasMoreData else { return }
+        
+        isFetching = true
+        
         guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=\(limit)&offset=\(offset)") else {
             pokemonSubject.onError(NetworkError.invalidUrl)
+            isFetching = false
             return
         }
         
         NetworkManager.shared.fetch(url: url)
             .subscribe(onSuccess: { [weak self] (pokemonList: PokemonList) in
-                self?.pokemonSubject.onNext(pokemonList.results)
-            }, onFailure: { [weak self] error in
-                self?.pokemonSubject.onError(error)
+                guard let self = self else { return }
+                
+                // 로드 된 데이터 있는지 확인
+                if pokemonList.results.isEmpty {
+                    self.hasMoreData = false // 없을 경우 플래그 false
+                } else {
+                    // 로드 된 데이터 있을 경우
+                    if reset { // 초기 데이터 로드 일 경우
+                        self.pokemonSubject.onNext(pokemonList.results)
+                    }
+                    // 스크롤 하여 추가 로드하는 경우
+                    else {
+                        var currentData = (try? self.pokemonSubject.value()) ?? []
+                        currentData.append(contentsOf: pokemonList.results)
+                        self.pokemonSubject.onNext(currentData)
+                    }
+                    // 오프셋 증가
+                    self.offset += self.limit
+                }
+                // 데이터 로드 후 중복 호출 방지 플래그 false
+                self.isFetching = false
+            }, onFailure: { error in
+                print("데이터 로드 실패: \(error)")
+                self.isFetching = false
             }).disposed(by: disposeBag)
     }
     
@@ -47,39 +76,4 @@ class MainViewModel {
         }
         return NetworkManager.shared.fetchImage(imageUrl)
     }
-    
-    // 포켓몬 데이터 새로 불러오기
-    func fetchMorePokemonData() {
-        print("fetchMorePokemonData 호출됨")
-        guard !isFetching, hasMoreData else { return } // 추가 데이터가 없거나 중복 호출 방지
-        
-        isFetching = true // 메서드 동작시 플래그 true
-        
-        offset += limit // 오프셋 파라미터 증가
-        
-        guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=\(limit)&offset=\(offset)") else {
-            pokemonSubject.onError(NetworkError.invalidUrl)
-            isFetching = false // url 에러시 플래그 초기화하고 종료
-            return
-        }
-        
-        NetworkManager.shared.fetch(url: url)
-            .subscribe(onSuccess: { [weak self] (pokemonList: PokemonList) in
-                // 새 데이터 여부 확인
-                if pokemonList.results.isEmpty {
-                    self?.hasMoreData = false // 더이상 데이터 없을 시 플래그 false
-                } else {
-                    // 기존 데이터에 새로운 데이터 추가
-                    var currentData = (try? self?.pokemonSubject.value()) ?? []
-                    currentData.append(contentsOf: pokemonList.results)
-                    self?.pokemonSubject.onNext(currentData)
-                }
-                
-                self?.isFetching = false // 새 데이터 호출 후 플래그 초기화
-            }, onFailure: { [weak self] error in
-                print("새 데이터 fetch 에러: \(error)")
-                self?.isFetching = false
-            }).disposed(by: disposeBag)
-    }
-    
 }
