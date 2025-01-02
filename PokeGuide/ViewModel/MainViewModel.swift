@@ -22,11 +22,11 @@ class MainViewModel {
     let noMoreDataSubject = PublishSubject<Void>()
     
     init() {
-        fetchPoekemonData(reset: true) // 초기 데이터 로드하도록 설정
+        fetchPokemonData(reset: true) // 초기 데이터 로드하도록 설정
     }
     
     // 포켓몬 데이터를 받아오는 메서드
-    func fetchPoekemonData(reset: Bool) {
+    func fetchPokemonData(reset: Bool) {
         // 초기 데이터 로드(true)인지 추가 데이터 로드(false)인지 확인
         if reset {
             offset = 0

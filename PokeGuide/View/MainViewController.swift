@@ -20,11 +20,11 @@ class MainViewController: UIViewController {
     
     private let mainViewModel = MainViewModel()
     private let disposeBag = DisposeBag()
-    private var isFetchingData = false
     
     private var pokemonData = [PokemonData]()
     
-    private let pokemonballImageView: UIImageView = {
+    // 포켓몬볼 이미지 뷰
+    private let pokemonBallImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "pokemonBall")
         imageView.backgroundColor = UIColor.mainRed
@@ -32,6 +32,7 @@ class MainViewController: UIViewController {
         return imageView
     }()
     
+    // 포켓몬 이미지를 띄울 컬렉션 뷰
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -48,7 +49,10 @@ class MainViewController: UIViewController {
         configureUI()
     }
     
+    // 데이터 바인딩 메서드
     private func bind() {
+
+        // 포켓몬 데이터 바인딩
         mainViewModel.pokemonSubject
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] pokemon in
@@ -58,34 +62,37 @@ class MainViewController: UIViewController {
                 print("에러 발생 : \(error)")
             }).disposed(by: disposeBag)
         
+        // 데이터 유무 확인하는 subject 바인딩
         mainViewModel.noMoreDataSubject
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] in
-                self?.showNoMoreAlert()
-                self?.collectionView.bounces = false
+                self?.showNoMoreAlert() // 더이상 데이터 없을 때 Alert
+                self?.collectionView.bounces = false    // 데이터 없을 떄 스크롤 바운스 효과 비활성화
             }).disposed(by: disposeBag)
     }
     
+    // UI 레이아웃 메서드
     private func configureUI() {
         view.backgroundColor = UIColor.mainRed
         [
-            pokemonballImageView,
+            pokemonBallImageView,
             collectionView
         ].forEach { view.addSubview($0) }
         
-        pokemonballImageView.snp.makeConstraints {
+        pokemonBallImageView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.centerX.equalTo(view.safeAreaLayoutGuide.snp.centerX)
             $0.width.height.equalTo(UIScreen.main.bounds.width * 0.3)
         }
         
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(pokemonballImageView.snp.bottom).offset(20)
+            $0.top.equalTo(pokemonBallImageView.snp.bottom).offset(20)
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide.snp.horizontalEdges)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
     
+    // Alert 메서드
     private func showNoMoreAlert() {
         let alert = UIAlertController(title: "알림", message: "더이상 포켓몬 데이터가 없습니다", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
@@ -111,8 +118,8 @@ extension MainViewController: UICollectionViewDelegate {
         let height = scrollView.frame.size.height // 화면에 보이는 스크롤뷰의 높이
         
         // 하단에 도달했을 때 새로운 데이터 로드하기
-        if offsetY > contentHeight - height - 200 && contentHeight > height {
-            mainViewModel.fetchPoekemonData(reset: false)
+        if offsetY > contentHeight - height - 300 && contentHeight > height {
+            mainViewModel.fetchPokemonData(reset: false)
         }
     }
 }
