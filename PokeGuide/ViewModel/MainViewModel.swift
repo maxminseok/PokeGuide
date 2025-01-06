@@ -7,10 +7,8 @@
 
 import UIKit
 import RxSwift
-import RxCocoa
 
-
-class MainViewModel {
+final class MainViewModel {
     
     private let disposeBag = DisposeBag()
     
@@ -27,7 +25,8 @@ class MainViewModel {
         fetchPokemonData(reset: true) // 초기 데이터 로드하도록 설정
     }
     
-    // 포켓몬 데이터를 받아오는 메서드
+    /// 포켓몬 데이터를 받아오는 메서드
+    /// - Parameter reset: 초기 데이터 로드일 경우 true, 스크롤 후 필요한 로드일 경우 false
     func fetchPokemonData(reset: Bool) {
         // 초기 데이터 로드(true)인지 추가 데이터 로드(false)인지 확인
         if reset {

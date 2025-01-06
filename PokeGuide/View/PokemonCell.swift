@@ -8,13 +8,14 @@
 import UIKit
 import Kingfisher
 
-class PokemonCell: UICollectionViewCell {
+/// 메인 화면의 컬렉션 뷰 셀
+final class PokemonCell: UICollectionViewCell {
     
     static let id = "PokemonCell"
     
     private var currentPokemonId: Int?
     
-    // 포켓몬 이미지
+    /// 포켓몬 이미지
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -41,7 +42,10 @@ class PokemonCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setImage(_ pokemonData: PokemonData, _ viewModel: MainViewModel) {
+    /// 컬렉션뷰 셀의 이미지를 그리는 메서드
+    /// - Parameters:
+    ///   - pokemonData: 셀에 들어갈 포켓몬의 데이터
+    func setImage(_ pokemonData: PokemonData) {
         let url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonData.id).png"
         // 이미지 로딩
         if let imageUrl = URL(string: url)  {
@@ -49,6 +53,7 @@ class PokemonCell: UICollectionViewCell {
         }
     }
     
+    /// UI 셋업 메서드
     private func setupUI() {
         [
             imageView

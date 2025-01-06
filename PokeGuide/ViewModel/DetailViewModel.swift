@@ -8,7 +8,7 @@
 import UIKit
 import RxSwift
 
-class DetailViewModel {
+final class DetailViewModel {
     
     func fetchPoekemonDetailData(_ pokemonData: PokemonData) -> Single<PokemonDetail> {
         guard let url = URL(string: "\(pokemonData.url)") else {

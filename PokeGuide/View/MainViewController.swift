@@ -10,14 +10,7 @@ import RxSwift
 import SnapKit
 import RxCocoa
 
-// 사용한 컬러 hex 값.
-extension UIColor {
-    static let mainRed = UIColor(red: 190/255, green: 30/255, blue: 40/255, alpha: 1.0)
-    static let darkRed = UIColor(red: 120/255, green: 30/255, blue: 30/255, alpha: 1.0)
-    static let cellBackground = UIColor(red: 245/255, green: 245/255, blue: 235/255, alpha: 1.0)
-}
-
-class MainViewController: UIViewController {
+final class MainViewController: UIViewController {
     
     private let mainViewModel = MainViewModel()
     private let disposeBag = DisposeBag()
@@ -27,7 +20,9 @@ class MainViewController: UIViewController {
     private let cellSelectedRelay = PublishRelay<IndexPath>()
     private let scrollRelay = PublishRelay<CGPoint>()
     
-    // 포켓몬볼 이미지 뷰
+    //MARK: - UI 컴포넌트 선언
+    
+    /// 포켓몬볼 이미지 뷰
     private let pokemonBallImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "pokemonBall")
@@ -36,7 +31,7 @@ class MainViewController: UIViewController {
         return imageView
     }()
     
-    // 포켓몬 이미지를 띄울 컬렉션 뷰
+    /// 포켓몬 이미지를 띄울 컬렉션 뷰
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -50,8 +45,10 @@ class MainViewController: UIViewController {
         bind()
         configureUI()
     }
+
+//MARK: - 메서드 선언
     
-    // 데이터 바인딩 메서드
+    /// 데이터 바인딩 메서드
     private func bind() {
         
         // 컬렉션 뷰 셀 선택 이벤트 바인딩
@@ -95,7 +92,7 @@ class MainViewController: UIViewController {
                 self?.pokemonData = pokemon
             })
             .bind(to: collectionView.rx.items(cellIdentifier: PokemonCell.id, cellType: PokemonCell.self)) { index, data, cell in
-                cell.setImage(data, self.mainViewModel)
+                cell.setImage(data)
             }.disposed(by: disposeBag)
 
         // 데이터 유무 확인하는 subject 바인딩
@@ -111,7 +108,7 @@ class MainViewController: UIViewController {
          
     }
     
-    // UI 레이아웃 메서드
+    /// UI 레이아웃 메서드
     private func configureUI() {
         view.backgroundColor = UIColor.mainRed
         [
@@ -132,7 +129,7 @@ class MainViewController: UIViewController {
         }
     }
     
-    // Alert 메서드
+    /// Alert 메서드
     private func showNoMoreAlert() {
         let alert = UIAlertController(title: "알림", message: "더이상 포켓몬 데이터가 없습니다", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
@@ -140,6 +137,7 @@ class MainViewController: UIViewController {
     }
 }
 
+//MARK: - 컬렉션 뷰 셀 설정
 extension MainViewController: UICollectionViewDelegateFlowLayout {
     
     // 셀 크기 설정

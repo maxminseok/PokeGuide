@@ -9,12 +9,15 @@ import UIKit
 import RxSwift
 import SnapKit
 
-class DetailViewController: UIViewController {
+/// 포켓몬 상세 정보를 띄울 DetailView
+final class DetailViewController: UIViewController {
     
     private let detailViewModel = DetailViewModel()
     private let disposeBag = DisposeBag()
     
-    // 포켓몬 정보를 띄울 배경 뷰
+    //MARK: - UI 컴포넌트 선언
+    
+    /// 포켓몬 정보를 띄울 배경 뷰
     private let pokemonView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.darkRed
@@ -22,7 +25,7 @@ class DetailViewController: UIViewController {
         return view
     }()
     
-    // 포켓몬 이미지뷰
+    /// 포켓몬 이미지뷰
     private let pokemonImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = UIColor.darkRed
@@ -30,7 +33,7 @@ class DetailViewController: UIViewController {
         return imageView
     }()
     
-    // 포켓몬 번호와 이름 스택뷰
+    /// 포켓몬 번호와 이름 스택뷰
     private let nameStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -40,7 +43,7 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
-    // 포켓몬 정보 스택뷰
+    /// 포켓몬 정보 스택뷰
     private let dataStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -50,7 +53,7 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
-    // 포켓몬 번호 레이블
+    /// 포켓몬 번호 레이블
     private let numberLabel: UILabel = {
         let label = UILabel()
         label.text = "No."
@@ -60,7 +63,7 @@ class DetailViewController: UIViewController {
         return label
     }()
 
-    // 포켓몬 이름 레이블
+    /// 포켓몬 이름 레이블
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "이름"
@@ -70,8 +73,7 @@ class DetailViewController: UIViewController {
         return label
     }()
 
-    
-    // 포켓몬 타입 레이블
+    /// 포켓몬 타입 레이블
     private let typeLabel: UILabel = {
         let label = UILabel()
         label.text = "타입: "
@@ -81,7 +83,7 @@ class DetailViewController: UIViewController {
         return label
     }()
     
-    // 포켓몬 키 레이블
+    /// 포켓몬 키 레이블
     private let heightLabel: UILabel = {
         let label = UILabel()
         label.text = "키: "
@@ -91,7 +93,7 @@ class DetailViewController: UIViewController {
         return label
     }()
 
-    // 포켓몬 몸무게 레이블
+    /// 포켓몬 몸무게 레이블
     private let weightLabel: UILabel = {
         let label = UILabel()
         label.text = "몸무게: "
@@ -101,13 +103,15 @@ class DetailViewController: UIViewController {
         return label
     }()
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureUI()
     }
     
+    // MARK: - 메서드 선언
+    
+    /// UI 셋업 메서드
     private func configureUI() {
         view.backgroundColor = UIColor.mainRed
         
@@ -159,7 +163,8 @@ class DetailViewController: UIViewController {
         }
     }
     
-    
+    /// 디테일 뷰 UI 업데이트 메서드
+    /// - Parameter pokemonData: 선택된 셀의 포켓몬 데이터
     func setDetailViewData(_ pokemonData: PokemonData) {
         let url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonData.id).png"
         // 이미지 로딩
@@ -180,5 +185,4 @@ class DetailViewController: UIViewController {
                 print("데이터 에러: \(error)")
             }).disposed(by: disposeBag)
     }
-    
 }
