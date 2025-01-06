@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 final class MainViewModel {
     
@@ -20,9 +21,13 @@ final class MainViewModel {
     // view가 구독할 subject
     let pokemonSubject = BehaviorSubject(value: [PokemonData]())
     let noMoreDataSubject = PublishSubject<Void>()
+    let cellSelectedRelay = PublishRelay<IndexPath>()
+    let scrollRelay = PublishRelay<CGPoint>()
     
     init() {
         fetchPokemonData(reset: true) // 초기 데이터 로드하도록 설정
+        bindCellSelection()
+        bindScrollEvent()
     }
     
     /// 포켓몬 데이터를 받아오는 메서드
@@ -73,4 +78,33 @@ final class MainViewModel {
                 self.isFetching = false
             }).disposed(by: disposeBag)
     }
+    
+    /// 셀 선택 이벤트 처리
+    func bindCellSelection() {
+        cellSelectedRelay
+            .subscribe(onNext: { [weak self] indexPath in
+                guard let self = self else { return }
+                if let pokemonList = try? self.pokemonSubject.value() {
+                    let selectedData = pokemonList[indexPath.row]
+                    let detailVC = DetailViewController()
+                    detailVC.setDetailViewData(selectedData)
+                }
+            }).disposed(by: disposeBag)
+    }
+    
+    // 스크롤 이벤트 처리
+    func bindScrollEvent() {
+        scrollRelay
+            .throttle(.milliseconds(100), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [weak self ] offset in
+                self?.handleScroll(offset)
+            }).disposed(by: disposeBag)
+    }
+    
+    // 스크롤시 새 데이터 로드
+    private func handleScroll(_ offset: CGPoint) {
+        
+        fetchPokemonData(reset: false)
+    }
+    
 }

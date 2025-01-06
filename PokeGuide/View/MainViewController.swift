@@ -17,9 +17,6 @@ final class MainViewController: UIViewController {
     
     private var pokemonData = [PokemonData]()
     
-    private let cellSelectedRelay = PublishRelay<IndexPath>()
-    private let scrollRelay = PublishRelay<CGPoint>()
-    
     //MARK: - UI 컴포넌트 선언
     
     /// 포켓몬볼 이미지 뷰
@@ -51,46 +48,31 @@ final class MainViewController: UIViewController {
     /// 데이터 바인딩 메서드
     private func bind() {
         
-        // 컬렉션 뷰 셀 선택 이벤트 바인딩
+        // 컬렉션 뷰 셀 선택 이벤트 전달
         collectionView.rx.itemSelected
-            .bind(to: cellSelectedRelay)
+            .bind(to: mainViewModel.cellSelectedRelay)
             .disposed(by: disposeBag)
         
         // 셀 선택 핸들링
-        cellSelectedRelay
+        mainViewModel.cellSelectedRelay
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self = self else { return }
-                let selectedCell = self.pokemonData[indexPath.row]
+                
+                guard let selectedData = try? self.mainViewModel.pokemonSubject.value()[indexPath.row] else { return }
+                
                 let detailVC = DetailViewController()
-                detailVC.setDetailViewData(selectedCell)
+                detailVC.setDetailViewData(selectedData)
                 self.navigationController?.pushViewController(detailVC, animated: true)
             }).disposed(by: disposeBag)
         
-        // 스크롤 이벤트 바인딩
+        // 스크롤 이벤트 전달
         collectionView.rx.contentOffset
-            .bind(to: scrollRelay)
+            .bind(to: mainViewModel.scrollRelay)
             .disposed(by: disposeBag)
-        
-        // 스크롤 이벤트 핸들링
-        scrollRelay
-            .debounce(.microseconds(100), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] offset in
-                guard let self = self else { return }
-                let offsetY = offset.y
-                let contentHeight = self.collectionView.contentSize.height
-                let height = self.collectionView.frame.size.height
-                
-                if offsetY > contentHeight - height - 100 && contentHeight > height {
-                    self.mainViewModel.fetchPokemonData(reset: false)
-                }
-            }).disposed(by: disposeBag)
 
         // 포켓몬 데이터 바인딩
         mainViewModel.pokemonSubject
             .observe(on: MainScheduler.instance)
-            .do(onNext: { [weak self] pokemon in
-                self?.pokemonData = pokemon
-            })
             .bind(to: collectionView.rx.items(cellIdentifier: PokemonCell.id, cellType: PokemonCell.self)) { index, data, cell in
                 cell.setImage(data)
             }.disposed(by: disposeBag)
