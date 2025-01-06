@@ -12,7 +12,6 @@ import RxCocoa
 final class MainViewModel {
     
     private let disposeBag = DisposeBag()
-    
     private let limit = 20
     private var offset = 0
     private var isFetching = false // 중복 호출 방지 플래그

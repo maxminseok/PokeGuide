@@ -53,7 +53,7 @@ final class MainViewController: UIViewController {
             .bind(to: mainViewModel.cellSelectedRelay)
             .disposed(by: disposeBag)
         
-        // 셀 선택 핸들링
+        // 셀 선택 후 디테일 뷰로 이동
         mainViewModel.cellSelectedRelay
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self = self else { return }
@@ -87,7 +87,6 @@ final class MainViewController: UIViewController {
         
         collectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
-         
     }
     
     /// UI 레이아웃 메서드
