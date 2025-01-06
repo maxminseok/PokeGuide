@@ -15,11 +15,15 @@ enum NetworkError: Error {
     case invalidData
 }
 
+/// 서버에서 데이터를 받아오기 위한 네트워크 매니저 클래스
 class NetworkManager {
     
     static let shared = NetworkManager()
     private init() {}
     
+    /// 서버에서 데이터를 받아오는 일반적인 형태의 메서드
+    /// - Parameter url: 요청을 보낼 url
+    /// - Returns: 반환 데이터를 Single 형태로 방출
     func fetch<T: Decodable>(url: URL) -> Single<T> {
         return Single.create { observer in
             let session = URLSession(configuration: .default)
