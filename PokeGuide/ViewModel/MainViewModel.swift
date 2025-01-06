@@ -72,12 +72,4 @@ class MainViewModel {
                 self.isFetching = false
             }).disposed(by: disposeBag)
     }
-    
-    // 포켓몬 이미지를 받아오는 메서드
-    func fetchPokemonImage(_ pokemonData: PokemonData) -> Single<UIImage> {
-        guard let imageUrl = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonData.id).png") else {
-            return Single.error(NetworkError.invalidUrl)
-        }
-        return NetworkManager.shared.fetchImage(imageUrl)
-    }
 }

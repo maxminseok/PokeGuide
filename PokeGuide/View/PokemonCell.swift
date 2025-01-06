@@ -11,7 +11,7 @@ import Kingfisher
 class PokemonCell: UICollectionViewCell {
     
     static let id = "PokemonCell"
-//    private var disposeBag = DisposeBag()
+    
     private var currentPokemonId: Int?
     
     // 포켓몬 이미지
@@ -21,6 +21,7 @@ class PokemonCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         imageView.backgroundColor = UIColor.cellBackground
         imageView.layer.cornerRadius = 10
+        imageView.kf.indicatorType = .activity
         return imageView
     }()
     
@@ -46,17 +47,6 @@ class PokemonCell: UICollectionViewCell {
         if let imageUrl = URL(string: url)  {
             imageView.kf.setImage(with: imageUrl)
         }
-
-//        let pokemonId = pokemonData.id
-//        currentPokemonId = pokemonId // 현재 포켓몬 id 저장
-//        viewModel.fetchPokemonImage(pokemonData)
-//            .observe(on: MainScheduler.instance)
-//            .subscribe(onSuccess: { [weak self] image in
-//                guard self?.currentPokemonId == pokemonId else { return } // 셀이 재사용 되지 않았는지 확인
-//                self?.imageView.image = image
-//            }, onError: { error in
-//                print("이미지 에러: \(error)")
-//            }).disposed(by: disposeBag)
     }
     
     private func setupUI() {

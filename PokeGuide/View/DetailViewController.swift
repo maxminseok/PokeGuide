@@ -106,7 +106,6 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         
         configureUI()
-        
     }
     
     private func configureUI() {
@@ -168,14 +167,7 @@ class DetailViewController: UIViewController {
             pokemonImageView.kf.setImage(with: imageUrl)
         }
         
-//        detailViewModel.fetchPokemonImage(data)
-//            .observe(on: MainScheduler.instance)
-//            .subscribe(onSuccess: { [weak self] image in
-//                self?.pokemonImageView.image = image
-//            }, onError: { error in
-//                print("이미지 에러: \(error)")
-//            }).disposed(by: disposeBag)
-        
+        // 포켓몬 데이터 바인딩
         detailViewModel.fetchPoekemonDetailData(pokemonData)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] pokemonDetail in
