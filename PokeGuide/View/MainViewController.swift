@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import SnapKit
+import RxCocoa
 
 // 사용한 컬러 hex 값.
 extension UIColor {
@@ -23,6 +24,9 @@ class MainViewController: UIViewController {
     
     private var pokemonData = [PokemonData]()
     
+    private let cellSelectedRelay = PublishRelay<IndexPath>()
+    private let scrollRelay = PublishRelay<CGPoint>()
+    
     // 포켓몬볼 이미지 뷰
     private let pokemonBallImageView: UIImageView = {
         let imageView = UIImageView()
@@ -37,8 +41,6 @@ class MainViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(PokemonCell.self, forCellWithReuseIdentifier: PokemonCell.id)
-        collectionView.delegate = self
-        collectionView.dataSource = self
         collectionView.backgroundColor = UIColor.darkRed
         return collectionView
     }()
@@ -51,17 +53,51 @@ class MainViewController: UIViewController {
     
     // 데이터 바인딩 메서드
     private func bind() {
+        
+        // 컬렉션 뷰 셀 선택 이벤트 바인딩
+        collectionView.rx.itemSelected
+            .bind(to: cellSelectedRelay)
+            .disposed(by: disposeBag)
+        
+        // 셀 선택 핸들링
+        cellSelectedRelay
+            .subscribe(onNext: { [weak self] indexPath in
+                guard let self = self else { return }
+                let selectedCell = self.pokemonData[indexPath.row]
+                let detailVC = DetailViewController()
+                detailVC.setDetailViewData(selectedCell)
+                self.navigationController?.pushViewController(detailVC, animated: true)
+            }).disposed(by: disposeBag)
+        
+        // 스크롤 이벤트 바인딩
+        collectionView.rx.contentOffset
+            .bind(to: scrollRelay)
+            .disposed(by: disposeBag)
+        
+        // 스크롤 이벤트 핸들링
+        scrollRelay
+            .debounce(.microseconds(100), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] offset in
+                guard let self = self else { return }
+                let offsetY = offset.y
+                let contentHeight = self.collectionView.contentSize.height
+                let height = self.collectionView.frame.size.height
+                
+                if offsetY > contentHeight - height - 100 && contentHeight > height {
+                    self.mainViewModel.fetchPokemonData(reset: false)
+                }
+            }).disposed(by: disposeBag)
 
         // 포켓몬 데이터 바인딩
         mainViewModel.pokemonSubject
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] pokemon in
+            .do(onNext: { [weak self] pokemon in
                 self?.pokemonData = pokemon
-                self?.collectionView.reloadData()
-            }, onError: { error in
-                print("에러 발생 : \(error)")
-            }).disposed(by: disposeBag)
-        
+            })
+            .bind(to: collectionView.rx.items(cellIdentifier: PokemonCell.id, cellType: PokemonCell.self)) { index, data, cell in
+                cell.setImage(data, self.mainViewModel)
+            }.disposed(by: disposeBag)
+
         // 데이터 유무 확인하는 subject 바인딩
         mainViewModel.noMoreDataSubject
             .observe(on: MainScheduler.instance)
@@ -69,6 +105,10 @@ class MainViewController: UIViewController {
                 self?.showNoMoreAlert() // 더이상 데이터 없을 때 Alert
                 self?.collectionView.bounces = false    // 데이터 없을 떄 스크롤 바운스 효과 비활성화
             }).disposed(by: disposeBag)
+        
+        collectionView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
+         
     }
     
     // UI 레이아웃 메서드
@@ -97,46 +137,6 @@ class MainViewController: UIViewController {
         let alert = UIAlertController(title: "알림", message: "더이상 포켓몬 데이터가 없습니다", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)
-    }
-}
-
-extension MainViewController: UICollectionViewDelegate {
-    
-    // 셀 선택 처리
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // detailViewController로 이동
-        let selectedCell = pokemonData[indexPath.row]
-        let detailVC = DetailViewController()
-        detailVC.setDetailViewData(selectedCell)
-        self.navigationController?.pushViewController(detailVC, animated: true)
-    }
-    
-    // 스크롤 감지 메서드
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y // 현재 스크롤된 Y 좌표
-        let contentHeight = scrollView.contentSize.height // 스크롤 되어야 하는 컨텐츠의 총 높이
-        let height = scrollView.frame.size.height // 화면에 보이는 스크롤뷰의 높이
-        
-        // 하단에 도달했을 때 새로운 데이터 로드하기
-        if offsetY > contentHeight - height - 300 && contentHeight > height {
-            mainViewModel.fetchPokemonData(reset: false)
-        }
-    }
-}
-
-extension MainViewController: UICollectionViewDataSource {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pokemonData.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCell.id, for: indexPath) as? PokemonCell else {
-            return UICollectionViewCell()
-        }
-        
-        cell.setImage(pokemonData[indexPath.row], mainViewModel)
-        return cell
     }
 }
 
