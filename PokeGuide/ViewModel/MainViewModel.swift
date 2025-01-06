@@ -92,7 +92,7 @@ final class MainViewModel {
             }).disposed(by: disposeBag)
     }
     
-    // 스크롤 이벤트 처리
+    /// 스크롤 이벤트 처리
     func bindScrollEvent() {
         scrollRelay
             .throttle(.milliseconds(100), scheduler: MainScheduler.instance)
@@ -101,9 +101,9 @@ final class MainViewModel {
             }).disposed(by: disposeBag)
     }
     
-    // 스크롤시 새 데이터 로드
+    /// 스크롤시 새 데이터 로드
     private func handleScroll(_ offset: CGPoint) {
-        
+        // 컨텐츠 크기와 컬렉션 뷰 크기를 계산 할 방법 찾기
         fetchPokemonData(reset: false)
     }
     
