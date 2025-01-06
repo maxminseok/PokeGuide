@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		237BB5672D2B639B00E64997 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 237BB5662D2B639B00E64997 /* Kingfisher */; };
 		239B9BAF2D1E7C8400F79AA5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 239B9BAE2D1E7C8400F79AA5 /* SnapKit */; };
 		239B9BB22D1E7C9B00F79AA5 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 239B9BB12D1E7C9B00F79AA5 /* RxCocoa */; };
 		239B9BB42D1E7C9B00F79AA5 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 239B9BB32D1E7C9B00F79AA5 /* RxRelay */; };
@@ -42,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				237BB5672D2B639B00E64997 /* Kingfisher in Frameworks */,
 				239B9BB42D1E7C9B00F79AA5 /* RxRelay in Frameworks */,
 				239B9BB22D1E7C9B00F79AA5 /* RxCocoa in Frameworks */,
 				239B9BAF2D1E7C8400F79AA5 /* SnapKit in Frameworks */,
@@ -90,6 +92,7 @@
 				239B9BAE2D1E7C8400F79AA5 /* SnapKit */,
 				239B9BB12D1E7C9B00F79AA5 /* RxCocoa */,
 				239B9BB32D1E7C9B00F79AA5 /* RxRelay */,
+				237BB5662D2B639B00E64997 /* Kingfisher */,
 			);
 			productName = PokeGuide;
 			productReference = 239B9B902D1E7B8B00F79AA5 /* PokeGuide.app */;
@@ -122,6 +125,7 @@
 			packageReferences = (
 				239B9BAD2D1E7C8400F79AA5 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				239B9BB02D1E7C9B00F79AA5 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				237BB5652D2B639B00E64997 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 239B9B912D1E7B8B00F79AA5 /* Products */;
@@ -349,6 +353,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		237BB5652D2B639B00E64997 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.3;
+			};
+		};
 		239B9BAD2D1E7C8400F79AA5 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -368,6 +380,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		237BB5662D2B639B00E64997 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 237BB5652D2B639B00E64997 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		239B9BAE2D1E7C8400F79AA5 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 239B9BAD2D1E7C8400F79AA5 /* XCRemoteSwiftPackageReference "SnapKit" */;

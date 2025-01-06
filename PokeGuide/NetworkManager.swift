@@ -48,27 +48,4 @@ class NetworkManager {
             return Disposables.create()
         }
     }
-    
-    // 포켓몬 이미지 로드 메서드
-    func fetchImage(_ url: URL) -> Single<UIImage> {
-        return Single.create { single in
-            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                if let error = error {
-                    single(.failure(error))
-                    return
-                }
-                
-                guard let data = data, let image = UIImage(data: data) else {
-                    single(.failure(NetworkError.invalidData))
-                    return
-                }
-                
-                single(.success(image))
-            }
-            task.resume()
-            return Disposables.create {
-                task.cancel()
-            }
-        }
-    }
 }

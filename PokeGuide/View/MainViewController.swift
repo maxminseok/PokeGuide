@@ -135,7 +135,7 @@ extension MainViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        cell.configure(pokemonData[indexPath.row], mainViewModel)
+        cell.setImage(pokemonData[indexPath.row], mainViewModel)
         return cell
     }
 }

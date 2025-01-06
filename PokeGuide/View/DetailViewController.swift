@@ -106,7 +106,6 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         
         configureUI()
-        
     }
     
     private func configureUI() {
@@ -161,16 +160,15 @@ class DetailViewController: UIViewController {
     }
     
     
-    func setDetailViewData(_ data: PokemonData) {
-        detailViewModel.fetchPokemonImage(data)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] image in
-                self?.pokemonImageView.image = image
-            }, onError: { error in
-                print("이미지 에러: \(error)")
-            }).disposed(by: disposeBag)
+    func setDetailViewData(_ pokemonData: PokemonData) {
+        let url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemonData.id).png"
+        // 이미지 로딩
+        if let imageUrl = URL(string: url)  {
+            pokemonImageView.kf.setImage(with: imageUrl)
+        }
         
-        detailViewModel.fetchPoekemonDetailData(data)
+        // 포켓몬 데이터 바인딩
+        detailViewModel.fetchPoekemonDetailData(pokemonData)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] pokemonDetail in
                 self?.nameLabel.text = PokemonTranslator.getKoreanName(for: pokemonDetail.name)
